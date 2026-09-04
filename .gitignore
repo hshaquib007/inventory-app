@@ -1,6 +1,9 @@
 # Secrets must never be committed
 .streamlit/secrets.toml
 
+# Migration scripts
+migrate_to_turso.py
+
 # Migration temp files (contain data / tokens)
 scripts/dump.sql
 scripts/progress.txt

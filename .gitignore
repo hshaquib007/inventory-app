@@ -1,0 +1,11 @@
+# Secrets must never be committed
+.streamlit/secrets.toml
+
+# Local / generated
+__pycache__/
+*.pyc
+inventory_local.db
+*.db
+.env
+.venv/
+venv/

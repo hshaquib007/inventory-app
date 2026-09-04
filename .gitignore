@@ -1,6 +1,18 @@
 # Secrets must never be committed
 .streamlit/secrets.toml
 
+# Migration temp files (contain data / tokens)
+scripts/dump.sql
+scripts/progress.txt
+scripts/migration_*.txt
+scripts/migrate_builtin.py
+scripts/migrate_fast.py
+scripts/migrate_smart.py
+scripts/upload_db.py
+scripts/upload_to_turso.py
+scripts/verify.py
+scripts/prepare_upload.py
+
 # Local / generated
 __pycache__/
 *.pyc

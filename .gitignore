@@ -24,3 +24,6 @@ inventory_local.db
 .env
 .venv/
 venv/
+# Test files
+test_*.py
+setup_*.py

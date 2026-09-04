@@ -237,27 +237,34 @@ def build_engine():
     url, token = _get_connection_params()
 
     if url:
-        connect_args = {}
-        if token:
-            # Turso uses the token as the SQLAlchemy URL password.
-            if '://' in url and not url.rstrip('/').split('://', 1)[1]:
-                url = f"{url.rstrip('/')}:{token}"
-            else:
-                # sqlalchemy-libsql accepts a token via a query param
-                connect_args = {'token': token}
+        # First try: Use sqlalchemy-libsql if available
         try:
             from sqlalchemy_libsql import LibSQLDialect  # noqa: F401  ensure installed
-            engine = create_engine(url, connect_args=connect_args)
+            
+            # Format URL with token
+            if token:
+                if '://' in url and not url.rstrip('/').split('://', 1)[1]:
+                    url = f"{url.rstrip('/')}:{token}"
+                else:
+                    # Add token as auth parameter
+                    if '?' in url:
+                        url = f"{url}&auth_token={token}"
+                    else:
+                        url = f"{url}?auth_token={token}"
+            
+            engine = create_engine(url)
+            print(f"Using Turso database via sqlalchemy-libsql")
             return engine
+            
+        except ImportError:
+            print("sqlalchemy-libsql not installed, falling back to local SQLite")
         except Exception as e:
-            raise RuntimeError(
-                "sqlalchemy-libsql is required for Turso. Install it via "
-                f"'pip install sqlalchemy-libsql' (error: {e})"
-            )
+            print(f"Turso connection error: {e}, falling back to local SQLite")
 
     # Local SQLite fallback (offline dev / testing)
     db_path = os.environ.get('INVENTORY_DB_PATH', 'inventory_local.db')
     db_path = os.path.abspath(db_path)
+    print(f"Using local SQLite database: {db_path}")
     return create_engine(f'sqlite:///{db_path}')
 
 

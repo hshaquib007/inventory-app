@@ -272,7 +272,12 @@ def init_db():
         return SessionLocal
 
     engine = build_engine()
-    Base.metadata.create_all(engine)
+    try:
+        # Create any missing tables; ignore "already exists" errors because
+        # a migrated Turso DB already has them (with data).
+        Base.metadata.create_all(engine)
+    except Exception:
+        pass
     SessionLocal = sessionmaker(bind=engine)
     return SessionLocal
 
